@@ -17,11 +17,13 @@ char keys[n_rows][n_cols] = {
  
 byte colPins[n_rows] = {D3, D2, D1, D0};
 byte rowPins[n_cols] = {D7, D6, D5, D4};
+
+String pin;
 Keypad myKeypad = Keypad( makeKeymap(keys), rowPins, colPins, n_rows, n_cols); 
 
 
 //WebServer Globals
-const char* ssid="Whyphi";
+const char* ssid="Wooloo";
 const char* password="ilikepie";
 int LED=2;
 int websockMillis=50;
@@ -31,7 +33,7 @@ unsigned long currentMillis;
 const unsigned long period = 1000*60;  // refresh time
 unsigned int counter = 0;
 
-bool flagContent = 0;
+byte flagContent = 0;
 
 ESP8266WebServer server(80);
 WebSocketsServer webSocket=WebSocketsServer(88);
@@ -188,10 +190,12 @@ label{
 </div>    
 </body>    
 <SCRIPT>
+    InitWebSocket()
+    function InitWebSocket()
+    {
+    websock = new WebSocket('ws://'+window.location.hostname+':88/');
+    }
     function sendPin(){
-    var stringPass=document.getElementById("Pass").value;
-    var Password = 'Pass='+stringPass;  
-     //alert(stringPass);
     websock.send("PinCheck");
     location.reload();
     } 
@@ -250,7 +254,18 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t weleng
   Serial.print("payloadString= ");
   Serial.println(payloadString);
 
-  if(type == WStype_TEXT) // receive text from cliet
+  if (payloadString == "PinCheck" && pin=="1234")
+  {
+    Serial.println("switch screen"); 
+    //String str = "hello world";
+    size_t sizeStr = sizeof(webSiteCont3) / sizeof(webSiteCont3[0]);
+    //Serial.println(sizeStr); 
+    memcpy(webSiteCont,webSiteCont3 , sizeStr);
+    flagContent = 1;
+    startMillis = millis();  //initial start time 
+    //str.toCharArray(webSiteCont,3);
+  }
+  else if(type == WStype_TEXT) // receive text from cliet
   {
     byte separator=payloadString.indexOf('=');
     String var = payloadString.substring(0,separator);
@@ -268,7 +283,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t weleng
         size_t sizeStr = sizeof(webSiteCont2) / sizeof(webSiteCont2[0]);
         //Serial.println(sizeStr); 
         memcpy(webSiteCont,webSiteCont2 , sizeStr);
-        flagContent = 1;
+        flagContent = 2;
         startMillis = millis();  //initial start time 
         //str.toCharArray(webSiteCont,3);
     }
@@ -305,7 +320,7 @@ void webServer()
   webSocket.loop();
  server.handleClient();
       
-  if( flagContent == 1 )
+  if( flagContent == 2 )
   {
       currentMillis = millis();  //get the current "time" (actually the number of milliseconds since the program started)
       if (currentMillis - startMillis >= period)  //test whether the period has elapsed
@@ -322,7 +337,7 @@ void webServer()
   counter ++;
   //Serial.println( counter );
   
-  if( flagContent == 1 )
+  if( flagContent == 2 )
   {
     String Data = String(counter);
     JSONtxt = "{\"Data\":\""+Data+"\"}";
@@ -333,16 +348,34 @@ void webServer()
 void pinPad()
 {
   char myKey = myKeypad.getKey();
- 
   if (myKey != NULL){
+    Serial.println(flagContent);
     Serial.print("Key pressed: ");
     Serial.println(myKey);
+    if (flagContent != 1)
+    {
+      pin = "";
+    }
+    else if (myKey == '*')
+    {
+      if (pin.length() > 0)
+        pin.remove(pin.length()-1);
+    }
+    else
+    {
+      pin += myKey;
+    }
+    Serial.print("Pin: ");
+    Serial.println(pin);
   }
 }
 
 void setup() {
   webServerSetup();
-
+  /*attachInterrupt(digitalPinToInterrupt(colPins[0]), pinPad, FALLING);
+  attachInterrupt(digitalPinToInterrupt(colPins[1]), pinPad, FALLING);
+  attachInterrupt(digitalPinToInterrupt(colPins[2]), pinPad, FALLING);
+  attachInterrupt(digitalPinToInterrupt(colPins[3]), pinPad, FALLING);*/
 }
 
 void loop() {
