@@ -7,6 +7,8 @@
 //PinPad Globals
 const byte n_rows = 4;
 const byte n_cols = 4;
+
+#define RES_KEY 1000
  
 char keys[n_rows][n_cols] = {
   {'1','2','3','A'},
@@ -23,7 +25,7 @@ Keypad myKeypad = Keypad( makeKeymap(keys), rowPins, colPins, n_rows, n_cols);
 
 
 //WebServer Globals
-const char* ssid="Wooloo";
+const char* ssid="Whyphi";
 const char* password="ilikepie";
 int LED=2;
 int websockMillis=50;
@@ -261,7 +263,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t weleng
     size_t sizeStr = sizeof(webSiteCont3) / sizeof(webSiteCont3[0]);
     //Serial.println(sizeStr); 
     memcpy(webSiteCont,webSiteCont3 , sizeStr);
-    flagContent = 1;
+    flagContent = 2;
     startMillis = millis();  //initial start time 
     //str.toCharArray(webSiteCont,3);
   }
@@ -283,7 +285,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t weleng
         size_t sizeStr = sizeof(webSiteCont2) / sizeof(webSiteCont2[0]);
         //Serial.println(sizeStr); 
         memcpy(webSiteCont,webSiteCont2 , sizeStr);
-        flagContent = 2;
+        flagContent = 1;
         startMillis = millis();  //initial start time 
         //str.toCharArray(webSiteCont,3);
     }
@@ -292,7 +294,6 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t weleng
 
 void webServerSetup()
 {
-  Serial.begin(9600);
   size_t sizeStr = sizeof(webSiteCont1) / sizeof(webSiteCont1[0]);
   //Serial.println(sizeStr); 
   //sizeStr = sizeof(webSiteCont2) / sizeof(webSiteCont2[0]);        
@@ -370,7 +371,22 @@ void pinPad()
   }
 }
 
+void resistorCheck()
+{
+  int val = analogRead(A0);
+  while ((val < (RES_KEY-5)) or (val > (RES_KEY+5)))
+  {
+    //Serial.print("\nResistor Value:\t");
+    //Serial.println(val);
+    Serial.println("Incorrect Resistor, Webserver not started.");
+    delay(2000);
+    val = analogRead(A0);
+  }
+}
+
 void setup() {
+  Serial.begin(9600);
+  resistorCheck();
   webServerSetup();
   /*attachInterrupt(digitalPinToInterrupt(colPins[0]), pinPad, FALLING);
   attachInterrupt(digitalPinToInterrupt(colPins[1]), pinPad, FALLING);
