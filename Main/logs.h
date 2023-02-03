@@ -10,9 +10,10 @@ void logs_setup()
     delay(500);  
   }
   client.write("Melon");
-  client.write("ESP Connected.");
+  client.write("ESP Connected. Webpage located at:  http://");
+  client.print(WiFi.localIP());
   Serial.print("Connected. Webpage on: ");
-  Serial.println(WiFi.localIP());
+  
 }
 
 //Loop

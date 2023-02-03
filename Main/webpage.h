@@ -58,10 +58,13 @@ label{
     <h2>ESP-8266 Login Page</h2><br>    
     <div class="login">    
     <div id="login" >      
+    <label><b>Username</b></label>    
+        <input type="uname" name="User" id="User">
+        <br>
     <label><b>Password</b></label>    
-        <input type="Password" name="Pass" id="Pass">    
+        <input type="password" name="Pass" id="Pass">    
         <br><br>    
-        <button onclick="sendPass()" id="log" > Log in </button>
+        <button onclick="sendLogin()" id="log" > Log in </button>
     </div>     
 </div>    
 </body>    
@@ -71,11 +74,12 @@ label{
   {
     websock = new WebSocket('ws://'+window.location.hostname+':88/');
   } // end of InıtWebSocket
-   function sendPass(){
+   function sendLogin(){
+    var stringUser=document.getElementById("User").value;
     var stringPass=document.getElementById("Pass").value;
-    var Password = 'Pass='+stringPass;  
+    var Credentials = 'Cred='+stringUser+'|'+stringPass;  
      //alert(stringPass);
-    websock.send(Password);
+    websock.send(Credentials);
     location.reload();
     } 
 </SCRIPT>
@@ -140,8 +144,8 @@ label{
     <h2>ESP-8266 Login Page</h2><br>    
     <div class="login">    
     <div id="login" >      
-    <label><b>Pin</b></label>    
-        <h3>Input PIN, then click "Log in"</h2><br>     
+    <label><b>Resistor</b></label>    
+        <h3>Connect resistor, then click "Log in"</h2><br>     
         <br><br>    
         <button onclick="sendRes()" id="log" > Log in </button>
     </div>     
@@ -154,7 +158,7 @@ label{
     websock = new WebSocket('ws://'+window.location.hostname+':88/');
     }
     function sendRes(){
-      websock.send("ResCheck");
+      websock.send("Res");
       location.reload();
     } 
 </SCRIPT>

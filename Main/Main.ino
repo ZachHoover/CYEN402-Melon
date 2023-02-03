@@ -5,14 +5,13 @@
 #include <WebSocketsClient.h>
 #include <AccelStepper.h>
 
-const char* ssid="Whyphi";
-const char* password="ilikepie";
+const char* wifissid="Whyphi";
+const char* wifipass="ilikepie";
 
 //Modules
 #include "web.h"
 #include "stepper.h"
-#include "resistors.h"
-#include "passwords.h"
+
 #include "logs.h"
 
 
@@ -21,14 +20,12 @@ void setup() {
   web_setup();
   logs_setup();
   passwords_setup();
-  resistors_setup();
   stepper_setup();
 }
 
 void loop() {
   web_loop();
   passwords_loop();
-  resistors_loop();
   stepper_loop();
   logs_loop();
 }

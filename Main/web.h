@@ -1,5 +1,7 @@
 //Globals
 #include "webpage.h"
+#include "passwords.h"
+
 //WebServer Globals
 
 int LED=2;
@@ -25,24 +27,35 @@ void WebSite(){
   
 }
 
+void pagechange(short pagenum)
+{
+  switch(pagenum)
+  {
+    size_t sizeStr;
+    case 1:
+      Serial.println("switch screen"); 
+      sizeStr = sizeof(webSiteCont2) / sizeof(webSiteCont2[0]);
+      memcpy(webSiteCont,webSiteCont2 , sizeStr);
+      flagContent = pagenum;
+    break;
+    case 2:
+      Serial.println("switch screen"); 
+      sizeStr = sizeof(webSiteCont3) / sizeof(webSiteCont3[0]);
+      memcpy(webSiteCont,webSiteCont3 , sizeStr);
+      flagContent = pagenum;
+      startMillis = millis();  //initial start time 
+    break;
+  }
+  
+}
+
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t welength)
 {
   String payloadString = (const char *)payload;
   Serial.print("payloadString= ");
   Serial.println(payloadString);
 
-  if (payloadString == "PinCheck")
-  {
-    Serial.println("switch screen");
-    //String str = "hello world";
-    size_t sizeStr = sizeof(webSiteCont3) / sizeof(webSiteCont3[0]);
-    //Serial.println(sizeStr); 
-    memcpy(webSiteCont,webSiteCont3 , sizeStr);
-    flagContent = 2;
-    startMillis = millis();  //initial start time 
-    //str.toCharArray(webSiteCont,3);
-  }
-  else if(type == WStype_TEXT) // receive text from cliet
+  if(type == WStype_TEXT) // receive text from cliet
   {
     byte separator=payloadString.indexOf('=');
     String var = payloadString.substring(0,separator);
@@ -53,16 +66,30 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t weleng
     Serial.println(val);
     Serial.println(" ");
 
-    if( var == "Pass" && val == "1234")
+    if (var == "Cred")
     {
-        Serial.println("switch screen"); 
-        //String str = "hello world";
-        size_t sizeStr = sizeof(webSiteCont2) / sizeof(webSiteCont2[0]);
-        //Serial.println(sizeStr); 
-        memcpy(webSiteCont,webSiteCont2 , sizeStr);
-        flagContent = 1;
-        startMillis = millis();  //initial start time 
-        //str.toCharArray(webSiteCont,3);
+        byte separator=val.indexOf('|');
+        String user = val.substring(0,separator);
+        String pass = val.substring(separator+1);
+        Serial.print("user=");
+        Serial.println(user);
+        Serial.print("pass=");
+        Serial.println(pass);
+        if (passwords_check(user, pass))
+        {
+          pagechange(1);
+        }
+    }
+    else if (var == "Res")
+    {
+      short res_val = analogRead(A0);
+      Serial.print("Resistor Value: ");
+      Serial.println(res_val);
+      if (resistor_check(res_val))
+      {
+        pagechange(2);
+        credIndex = -1;
+      }
     }
   } 
 }
@@ -71,13 +98,10 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t weleng
 void web_setup()
 {
   size_t sizeStr = sizeof(webSiteCont1) / sizeof(webSiteCont1[0]);
-  //Serial.println(sizeStr); 
-  //sizeStr = sizeof(webSiteCont2) / sizeof(webSiteCont2[0]);        
-  //Serial.println(sizeStr); 
   memcpy(webSiteCont, webSiteCont1, sizeStr);
         
   pinMode(LED,OUTPUT);
-  WiFi.begin(ssid,password);
+  WiFi.begin(wifissid,wifipass);
   Serial.println("Connecting to Wi-Fi");
   while(WiFi.status() != WL_CONNECTED)
   {
