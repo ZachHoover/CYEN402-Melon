@@ -1,6 +1,9 @@
 //Globals
 #include "webpage.h"
 #include "passwords.h"
+#include "stepper.h"
+WiFiClient client;
+#include "logs.h"
 
 //WebServer Globals
 
@@ -18,7 +21,7 @@ ESP8266WebServer server(80);
 WebSocketsServer webSocket=WebSocketsServer(88);
 String webSite,JSONtxt;
 boolean LEDonoff=true;
-WiFiClient client;
+
 
 //Internal 
 void WebSite(){
@@ -68,17 +71,22 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t weleng
 
     if (var == "Cred")
     {
-        byte separator=val.indexOf('|');
-        String user = val.substring(0,separator);
-        String pass = val.substring(separator+1);
-        Serial.print("user=");
-        Serial.println(user);
-        Serial.print("pass=");
-        Serial.println(pass);
-        if (passwords_check(user, pass))
-        {
-          pagechange(1);
-        }
+      byte separator=val.indexOf('|');
+      String user = val.substring(0,separator);
+      String pass = val.substring(separator+1);
+      Serial.print("user=");
+      Serial.println(user);
+      Serial.print("pass=");
+      Serial.println(pass);
+      if (passwords_check(user, pass))
+      {
+        pagechange(1);
+        client.print("Login Attempt\n  Accepted\n  User:  "+user);
+      }
+      else
+      {
+        client.print("Login Attempt\n  Rejected\n  User:  "+user);
+      }
     }
     else if (var == "Res")
     {
@@ -88,7 +96,12 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t weleng
       if (resistor_check(res_val))
       {
         pagechange(2);
+        client.print("Resistor 2FA\n  Accepted\n  User:  "+String(username[credIndex]));
         credIndex = -1;
+      }
+      else
+      {
+        client.print("Resistor 2FA\n  Rejected\n  User:  "+String(username[credIndex]));
       }
     }
   } 

@@ -10,9 +10,6 @@ const char* wifipass="ilikepie";
 
 //Modules
 #include "web.h"
-#include "stepper.h"
-
-#include "logs.h"
 
 
 void setup() {

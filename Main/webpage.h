@@ -37,14 +37,14 @@ label{
     font-size: 17px;  
 }  
  
-#Pass{  
+input{  
     width: 300px;  
     height: 30px;  
     border: none;  
     border-radius: 3px;  
-    padding-left: 8px;  
-      
+    padding-left: 8px;     
 }  
+
 #log{  
     width: 100px;  
     height: 30px;
