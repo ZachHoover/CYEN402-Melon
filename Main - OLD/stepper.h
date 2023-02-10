@@ -6,19 +6,12 @@ int energy = 0;
 double power = 0;
 int stepperspeed = 512;
 
-void change_speed()
-{
-  stepper.setSpeed(stepperspeed);
-  power = stepperspeed/(double)POWERFACTOR;
-}
-
 //Setup
 void stepper_setup()
 {
    stepper.setCurrentPosition(0);
    stepper.setMaxSpeed(1000);
    stepper.setSpeed(stepperspeed);
-   power = stepperspeed/(double)POWERFACTOR;
 }
 
 //Loop
@@ -26,4 +19,5 @@ void stepper_loop()
 {
   stepper.runSpeed();
   energy = stepper.currentPosition() / STEPS_PER_REV;
+  power = stepperspeed/(double)POWERFACTOR;
 }

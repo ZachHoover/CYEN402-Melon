@@ -1,9 +1,9 @@
 #include <ESP8266WiFi.h>
+#include <WebSocketsServer.h>
+#include <ESP8266WebServer.h>
 #include <Keypad.h>
 #include <WebSocketsClient.h>
 #include <AccelStepper.h>
-#include <ESPAsyncTCP.h>
-#include <ESPAsyncWebServer.h>
 
 const char* wifissid="Whyphi";
 const char* wifipass="ilikepie";
@@ -21,7 +21,7 @@ void setup() {
 }
 
 void loop() {
-  //web_loop();
+  web_loop();
   passwords_loop();
   stepper_loop();
   logs_loop();

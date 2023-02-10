@@ -2,7 +2,8 @@
 char webSiteCont[2000];
 
 //==========Main Page===========
-const char page_login[] PROGMEM = R"rawliteral(
+char webSiteCont1[] = 
+R"=====(
 <!DOCTYPE html>    
 <html>    
 <head>    
@@ -56,27 +57,39 @@ input{
 <body>    
     <h2>Melon</h2><br>    
     <div class="login">    
-    <div id="login" >    
-    <form action="/login">
+    <div id="login" >      
     <label><b>Username</b></label>    
         <input type="uname" name="User" id="User">
         <br>
     <label><b>Password</b></label>    
         <input type="password" name="Pass" id="Pass">    
-        <br><br><h2>Make sure your ID card is connected before hitting login.</h2><br>    
-        <input type="submit" id="log" value="Login">
-    </form>
+        <br><br>    
+        <button onclick="sendLogin()" id="log" > Log in </button>
     </div>     
 </div>    
 </body>    
 <SCRIPT>
+  InitWebSocket()
+  function InitWebSocket()
+  {
+    websock = new WebSocket('ws://'+window.location.hostname+':88/');
+  } // end of InıtWebSocket
+   function sendLogin(){
+    var stringUser=document.getElementById("User").value;
+    var stringPass=document.getElementById("Pass").value;
+    var Credentials = 'Cred='+stringUser+'|'+stringPass;  
+     //alert(stringPass);
+    websock.send(Credentials);
+    location.reload();
+    } 
 </SCRIPT>
 </html>  
-)rawliteral";
+)=====";
 
 
 //==========Pinpad Page===========
-const char page_resistor[] PROGMEM = R"rawliteral(
+char webSiteCont2[] = 
+R"=====(
 <!DOCTYPE html>    
 <html>    
 <head>    
@@ -150,34 +163,14 @@ label{
     } 
 </SCRIPT>
 </html>  
-)rawliteral";
-
-const char page_authed[] PROGMEM = R"rawliteral(
-<!DOCTYPE html>    
-<html>
-<head>
-</head>
-<style>
-</style>
-<body>
-</body>
-<SCRIPT>
-</SCRIPT>
-</html>
-)rawliteral";
-
-
-
-
-
-
-
+)=====";
 
 
 
 //PM, DD, DNI, DE, AM
 //==========PM Page===========
-const char page_pm[] PROGMEM = R"rawliteral(
+char webSiteCont3[] = 
+R"=====(
 <!DOCTYPE html>    
 <html>    
 <head>    
@@ -248,11 +241,12 @@ label{
     } 
 </SCRIPT>
 </html>
-)rawliteral";
+)=====";
 
 
 //==========SD Page===========
-const char page_sd[] PROGMEM = R"rawliteral(
+char webSiteCont4[] = 
+R"=====(
 <!DOCTYPE html>    
 <html>    
 <head>    
@@ -323,11 +317,12 @@ label{
     } 
 </SCRIPT>
 </html>
-)rawliteral";
+)=====";
 
 
 //==========DNI Page===========
-const char page_dni[] PROGMEM = R"rawliteral(
+char webSiteCont5[] = 
+R"=====(
 <!DOCTYPE html>    
 <html>    
 <head>    
@@ -398,11 +393,12 @@ label{
     } 
 </SCRIPT>
 </html>
-)rawliteral";
+)=====";
 
 
 //==========DE Page===========
-const char page_de[] PROGMEM = R"rawliteral(
+char webSiteCont6[] = 
+R"=====(
 <!DOCTYPE html>    
 <html>    
 <head>    
@@ -459,23 +455,38 @@ input{
     <div class="login">    
     <div id="login" >      
     <label><b>Power Production</b></label>
-        <h1 id="rev">%POWERPROD%</h1><br>
+        <h1 id="rev"></h1><br>
     <label><b>Set Speed</b></label>
-    <form action="/de/speed">
-        <input type="number" name="Speed" id="Speed" min="0" max="1024">
-        <br><br>
-        <input type="submit" id="log" value="Set Speed">
+        <input type="number" id="speed" min="0" max="1024">
+        <br>    
+        <button onclick="sendSpeed()" id="log" > Set Speed </button>
         <br>
     </div>     
     </div>    
 </body>    
 <SCRIPT>
+    InitWebSocket()
+    function InitWebSocket()
+    {
+    websock = new WebSocket('ws://'+window.location.hostname+':88/');
+    }
+    websock.onmessage=function(evt)
+    {
+       JSONobj = JSON.parse(evt.data);
+       document.getElementById('rev').innerHTML = JSONobj.Power;
+    } // end of onmessage
+    function sendSpeed(){
+    var stringSpeed=document.getElementById("speed").value;
+    var Credentials = 'Speed='+stringSpeed;  
+    websock.send(Credentials);
+    }
 </SCRIPT>
 </html>
-)rawliteral";
+)=====";
 
 //==========AM Page===========
-const char page_am[] PROGMEM = R"rawliteral(
+char webSiteCont7[] = 
+R"=====(
 <!DOCTYPE html>    
 <html>    
 <head>    
@@ -546,4 +557,4 @@ label{
     } 
 </SCRIPT>
 </html>
-)rawliteral";
+)=====";

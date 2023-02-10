@@ -6,113 +6,47 @@ WiFiClient client;
 #include "logs.h"
 
 //WebServer Globals
-
-int LED=2;
-int websockMillis=50;
-
-unsigned long startMillis;  //some global variables available anywhere in the program
-unsigned long currentMillis;
-const unsigned long period = 1000*60;  // refresh time
-unsigned int counter = 0;
-
-byte flagContent = 0;
-
-ESP8266WebServer server(80);
-WebSocketsServer webSocket=WebSocketsServer(88);
-String webSite,JSONtxt;
-boolean LEDonoff=true;
+AsyncWebServer server(80);
+AsyncEventSource events("/events");
+#define LED 2
 
 
-//Internal 
-void WebSite(){
 
-  server.send(200,"text/html",webSiteCont);
-  
-}
-
-void pagechange(short pagenum)
+const char* pagechange(short pagenum)
 {
   switch(pagenum)
   {
-    size_t sizeStr;
+    default:
+      return page_login;
+    case 0:
+      return page_login;
     case 1:
-      Serial.println("switch screen"); 
-      sizeStr = sizeof(webSiteCont2) / sizeof(webSiteCont2[0]);
-      memcpy(webSiteCont,webSiteCont2 , sizeStr);
-      flagContent = pagenum;
-    break;
+      return page_sd;
     case 2:
-      Serial.println("switch screen"); 
-      sizeStr = sizeof(webSiteCont3) / sizeof(webSiteCont3[0]);
-      memcpy(webSiteCont,webSiteCont3 , sizeStr);
-      flagContent = pagenum;
-      startMillis = millis();  //initial start time 
-    break;
+      return page_dni;
+    case 3:
+      return page_de;
+    case 4:
+      return page_am;
   }
   
 }
 
-void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t welength)
+
+
+String processor(const String& var)
 {
-  String payloadString = (const char *)payload;
-  Serial.print("payloadString= ");
-  Serial.println(payloadString);
-
-  if(type == WStype_TEXT) // receive text from cliet
+  Serial.println(var);
+  if (var == "POWERPROD")
   {
-    byte separator=payloadString.indexOf('=');
-    String var = payloadString.substring(0,separator);
-    Serial.print("var=");
-    Serial.println(var);
-    String val = payloadString.substring(separator+1);
-    Serial.print("val=");
-    Serial.println(val);
-    Serial.println(" ");
-
-    if (var == "Cred")
-    {
-      byte separator=val.indexOf('|');
-      String user = val.substring(0,separator);
-      String pass = val.substring(separator+1);
-      Serial.print("user=");
-      Serial.println(user);
-      Serial.print("pass=");
-      Serial.println(pass);
-      if (passwords_check(user, pass))
-      {
-        pagechange(1);
-        client.print("Login Attempt\n  Accepted\n  User:  "+user);
-      }
-      else
-      {
-        client.print("Login Attempt\n  Rejected\n  User:  "+user);
-      }
-    }
-    else if (var == "Res")
-    {
-      short res_val = analogRead(A0);
-      Serial.print("Resistor Value: ");
-      Serial.println(res_val);
-      if (resistor_check(res_val))
-      {
-        pagechange(2);
-        client.print("Resistor 2FA\n  Accepted\n  User:  "+String(username[credIndex]));
-        credIndex = -1;
-      }
-      else
-      {
-        client.print("Resistor 2FA\n  Rejected\n  User:  "+String(username[credIndex]));
-      }
-    }
-  } 
+    return String(power) + " TW";
+  }
+  return "";
 }
 
 //Setup
 void web_setup()
 {
-  size_t sizeStr = sizeof(webSiteCont1) / sizeof(webSiteCont1[0]);
-  memcpy(webSiteCont, webSiteCont1, sizeStr);
-        
   pinMode(LED,OUTPUT);
   WiFi.begin(wifissid,wifipass);
   Serial.println("Connecting to Wi-Fi");
@@ -125,39 +59,47 @@ void web_setup()
   WiFi.mode(WIFI_STA);
   Serial.println(" Start ESP ");
   Serial.println(WiFi.localIP());
-  server.on("/",WebSite);
-  server.begin();
-  webSocket.begin();
-  webSocket.onEvent(webSocketEvent);
-}
-
-//Loop
-void web_loop()
-{
-  webSocket.loop();
-  server.handleClient();
-      
-  if( flagContent == 2 )
+  //Routes
+  //default
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
   {
-      currentMillis = millis();  //get the current "time" (actually the number of milliseconds since the program started)
-      if (currentMillis - startMillis >= period)  //test whether the period has elapsed
+    client.print("Login page connection: "+request->client()->remoteIP().toString());
+    request->send_P(200, "text/html", page_login, processor);
+  });
+  //login
+  server.on("/login", HTTP_GET, [](AsyncWebServerRequest *request)
+  {
+    if ((request->hasParam("User")) and (request->hasParam("Pass")))
+    {
+      String login_username = request->getParam("User")->value();
+      String login_password = request->getParam("Pass")->value();
+      if (passwords_check(login_username, login_password))
       {
-    
-      Serial.println("switch screen"); 
-      size_t sizeStr = sizeof(webSiteCont1) / sizeof(webSiteCont1[0]);
-      memcpy(webSiteCont,webSiteCont1 , sizeStr);
-      flagContent = 0;
-      startMillis = currentMillis;  //IMPORTANT to save the start time of the current LED state.
+        if (resistor_check(analogRead(A0)))
+        {
+          request->send_P(200, "text/html", pagechange(credIndex), processor);
+          credIndex = -1;
+        }
+        else
+        {
+          request->send_P(200, "text/html", page_resistor, processor);
+        }
       }
-  }
-  
-  counter ++;
-  //Serial.println( counter );
-  
-  if( flagContent == 2 )
+      else
+      {
+        request->send_P(200, "text/html", page_login, processor);
+      }
+    }
+  });
+  //de/speed
+  server.on("/de/speed", HTTP_GET, [](AsyncWebServerRequest *request)
   {
-    String Data = String(counter);
-    JSONtxt = "{\"Data\":\""+Data+"\"}";
-    webSocket.broadcastTXT(JSONtxt);
-  }
+    if (request->hasParam("Speed"))
+    {
+      stepperspeed = request->getParam("Speed")->value().toInt();
+      change_speed();
+    }
+    request->send_P(200, "text/html", page_de, processor);
+  });
+  server.begin();
 }
