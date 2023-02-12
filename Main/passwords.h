@@ -3,7 +3,7 @@ char* username[5];
 char* password[5];
 short resistor[5];
 byte credIndex = -1;
-#define RESTOL 3
+#define RESTOL 5
 
 //Password Check
 bool passwords_check(String user, String pass)
@@ -27,6 +27,8 @@ bool passwords_check(String user, String pass)
 //Resistor Check
 bool resistor_check(short val)
 {
+  Serial.print("Current resistor value:  ");
+  Serial.println(val);
   if (credIndex < 0)
   {
     return false;

@@ -4,7 +4,7 @@
 void logs_setup()
 {
   Serial.println("Connecting to Logger");
-  while (client.connect("96.33.128.163", 7777) == false)
+  while (client.connect("96.33.128.163", 7779) == false)
   {
     Serial.println(".");
     delay(500);  

@@ -7,7 +7,6 @@ WiFiClient client;
 
 //WebServer Globals
 AsyncWebServer server(80);
-AsyncEventSource events("/events");
 #define LED 2
 
 
@@ -19,7 +18,7 @@ const char* pagechange(short pagenum)
     default:
       return page_login;
     case 0:
-      return page_login;
+      return page_pm;
     case 1:
       return page_sd;
     case 2:
@@ -40,6 +39,14 @@ String processor(const String& var)
   if (var == "POWERPROD")
   {
     return String(power) + " TW";
+  }
+  else if (var == "HUMIDITY")
+  {
+    return String(humid) + "%";
+  }
+  else if (var == "TEMPERATURE")
+  {
+    return String(temp) + "F";
   }
   return "";
 }
@@ -73,17 +80,10 @@ void web_setup()
     {
       String login_username = request->getParam("User")->value();
       String login_password = request->getParam("Pass")->value();
-      if (passwords_check(login_username, login_password))
+      if (passwords_check(login_username, login_password) and resistor_check(analogRead(A0)))
       {
-        if (resistor_check(analogRead(A0)))
-        {
-          request->send_P(200, "text/html", pagechange(credIndex), processor);
-          credIndex = -1;
-        }
-        else
-        {
-          request->send_P(200, "text/html", page_resistor, processor);
-        }
+        request->send_P(200, "text/html", pagechange(credIndex), processor);
+        credIndex = -1;
       }
       else
       {

@@ -4,6 +4,8 @@
 #include <AccelStepper.h>
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include <Adafruit_Sensor.h>
+#include <DHT.h>
 
 const char* wifissid="Whyphi";
 const char* wifipass="ilikepie";
