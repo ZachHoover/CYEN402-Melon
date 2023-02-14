@@ -124,6 +124,7 @@ void web_setup()
       {
         stepperspeed = request->getParam("Speed")->value().toInt();
         change_speed();
+        send_log("Power production changed to "+String(power)+" TW");
       }
     }
     else

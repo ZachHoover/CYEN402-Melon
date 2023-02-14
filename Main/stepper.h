@@ -5,7 +5,7 @@
 AccelStepper stepper(AccelStepper::HALF4WIRE, D1, D3, D2, D4);
 int energy = 0;
 double power = 0;
-int stepperspeed = 512;
+int stepperspeed = 768;
 unsigned int dht_time = 0;
 float temp, humid;
 

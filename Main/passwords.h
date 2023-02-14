@@ -80,24 +80,24 @@ bool resistor_check(short val)
 //Setup
 void passwords_setup()
 {
-  username[0] = "pm";
-  password[0] = "1234";
+  username[0] = "SoBigPrime";
+  password[0] = "DepartBudget16";
   resistor[0] = 900;
   
-  username[1] = "sd";
-  password[1] = "1234";
+  username[1] = "MaxDefense";
+  password[1] = "ExcuseTreaty04";
   resistor[1] = 900;
   
-  username[2] = "di";
-  password[2] = "1234";
+  username[2] = "BigBrother";
+  password[2] = "ProperManual34";
   resistor[2] = 900;
   
-  username[3] = "de";
-  password[3] = "1234";
-  resistor[3] = 900;
+  username[3] = "MrElectric";
+  password[3] = "CoerceRelate12";
+  resistor[3] = 847;
   
-  username[4] = "am";
-  password[4] = "1234";
+  username[4] = "Negotiator";
+  password[4] = "ShrinkAffect75";
   resistor[4] = 900;
   
 }

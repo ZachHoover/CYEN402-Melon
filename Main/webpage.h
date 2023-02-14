@@ -112,12 +112,65 @@ const char page_loggedout[] PROGMEM = R"rawliteral(
 const char page_pm[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>    
 <html>    
-<head>
-    <meta http-equiv="refresh" content="0; url=http://192.168.1.149" /> 
+<head>    
+    <title>Melon</title>    
+    <link rel="stylesheet" type="text/css" href="css/style.css">    
 </head>    
 <style>
+body  
+{  
+    margin: 0;  
+    background-color:#38e000;  
+    font-family: 'Arial';  
+}  
+.login
+{  
+  width: 282px;  
+  overflow: hidden;  
+  margin: auto;  
+  margin: 20 0 0 0px;  
+  padding: 60px;  
+  background: #24623f;  
+  border-radius: 15px ;          
+}  
+h2{  
+    text-align: center;  
+    color: #277582;  
+    padding: 20px;  
+}  
+label{  
+    color: #08ffd1;  
+    font-size: 17px;  
+}  
+ 
+#Pass{  
+    width: 300px;  
+    height: 30px;  
+    border: none;  
+    border-radius: 3px;  
+    padding-left: 8px;  
+      
+}  
+#log{  
+    width: 100px;  
+    height: 30px;
+    margin-left:200px;
+    border: none;  
+    border-radius: 17px;  
+    color: black;
+}  
 </style>
 <body>    
+    <h2>Secretary of Defense</h2><br>    
+    <div class="login">    
+    <div id="login" >      
+    <form action="/logout">
+    <input type="submit" id="log" value="Logout"><br>
+    </form>
+    <label><b>Power Production</b></label>
+        <h1 id="rev">%POWERPROD%</h1><br>
+    </div>     
+    </div>    
 </body>    
 <SCRIPT>
 </SCRIPT>
