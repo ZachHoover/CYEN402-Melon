@@ -2,8 +2,8 @@
 
 void send_log(String str)
 {
-  Serial.println(msg);
-  client.print(msg);
+  Serial.println(str);
+  client.print(str);
 }
 
 //Setup
