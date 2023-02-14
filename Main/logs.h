@@ -1,5 +1,11 @@
 //Globals
 
+void send_log(String str)
+{
+  Serial.println(msg);
+  client.print(msg);
+}
+
 //Setup
 void logs_setup()
 {
@@ -9,9 +15,8 @@ void logs_setup()
     Serial.println(".");
     delay(500);  
   }
-  client.write("Melon");
-  client.write("ESP Connected. Webpage located at:  http://");
-  client.print(WiFi.localIP());
+  client.print("Melon");
+  send_log("ESP Connected. Webpage located at:  http://"+WiFi.localIP().toString());
   Serial.println("Connected.");
   
 }

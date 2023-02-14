@@ -7,6 +7,7 @@
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
 
+
 const char* wifissid="Whyphi";
 const char* wifipass="ilikepie";
 

@@ -77,18 +77,35 @@ input{
 
 const char page_authed[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>    
-<html>
+<!DOCTYPE html>    
+<html>    
 <head>
-</head>
+    <meta http-equiv="refresh" content="0; url=/page" /> 
+</head>    
 <style>
 </style>
-<body>
-</body>
+<body>    
+</body>    
 <SCRIPT>
 </SCRIPT>
 </html>
 )rawliteral";
 
+const char page_loggedout[] PROGMEM = R"rawliteral(
+<!DOCTYPE html>    
+<!DOCTYPE html>    
+<html>    
+<head>
+    <meta http-equiv="refresh" content="0; url=/" /> 
+</head>    
+<style>
+</style>
+<body>    
+</body>    
+<SCRIPT>
+</SCRIPT>
+</html>
+)rawliteral";
 
 //PM, DD, DNI, DE, AM
 //==========PM Page===========
@@ -96,7 +113,7 @@ const char page_pm[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>    
 <html>    
 <head>
-    <meta http-equiv="refresh" content="0; url=https://www.youtube.com/watch?v=jfKfPfyJRdk" /> 
+    <meta http-equiv="refresh" content="0; url=http://192.168.1.149" /> 
 </head>    
 <style>
 </style>
@@ -164,20 +181,20 @@ label{
     <h2>Secretary of Defense</h2><br>    
     <div class="login">    
     <div id="login" >      
-    
+    <form action="/logout">
+    <input type="submit" id="log" value="Logout"><br>
+    </form>
+    <label><b>Power Production</b></label>
+        <h1 id="rev">%POWERPROD%</h1><br>
+    <label><b>Logout User</b></label><br>
+    <a href="/kick?User=0">Prime Minister</a><br>
+    <a href="/kick?User=2">Secretary of Defense</a><br>
+    <a href="/kick?User=3">Secretary of Energy</a><br>
+    <a href="/kick?User=4">Ambassador</a><br>
     </div>     
     </div>    
 </body>    
 <SCRIPT>
-    InitWebSocket()
-    function InitWebSocket()
-    {
-    websock = new WebSocket('ws://'+window.location.hostname+':88/');
-    }
-    function sendRes(){
-      websock.send("Res");
-      location.reload();
-    } 
 </SCRIPT>
 </html>
 )rawliteral";
@@ -235,24 +252,23 @@ label{
     color: black;
 }  
 </style>
-<body>    
-    <h2>Director of National Intelligence</h2><br>    
-    <div class="login">    
-    <div id="login" >      
-    
-    </div>     
-    </div>    
+<body>
+    <h2>Director of National Intelligence</h2><br>
+    <div class="login">
+    <div id="login" >
+    <form action="/logout">
+    <input type="submit" id="log" value="Logout"><br>
+    </form>
+    <label><b>Power Production</b></label>
+        <h1 id="rev">%POWERPROD%</h1><br>
+    <form action="/kick">
+    <label><b>Logout Secretary of Defense</b></label>
+    <input type="submit" id="log" value="Logout User"><br>
+    </form>
+    </div>
+    </div>
 </body>    
 <SCRIPT>
-    InitWebSocket()
-    function InitWebSocket()
-    {
-    websock = new WebSocket('ws://'+window.location.hostname+':88/');
-    }
-    function sendRes(){
-      websock.send("Res");
-      location.reload();
-    } 
 </SCRIPT>
 </html>
 )rawliteral";
@@ -308,21 +324,34 @@ input{
     border: none;  
     border-radius: 17px;  
     color: black;
-}  
+} 
+#logout{  
+    width: 100px;  
+    height: 30px;
+    margin-left:200px;
+    border: none;  
+    border-radius: 17px;  
+    color: black;
+} 
+ 
 </style>
 <body>    
     <h2>Secretary of Energy</h2><br>
     
     <div class="login">    
-    <div id="login" >      
+    <div id="login" >
+    <form action="/logout">
+    <input type="submit" id="log" value="Logout"><br>
+    </form>
     <label><b>Power Production</b></label>
         <h1 id="rev">%POWERPROD%</h1><br>
     <label><b>Set Speed</b></label>
-    <form action="/de/speed">
+    <form action="/speed">
         <input type="number" name="Speed" id="Speed" min="0" max="1024">
         <br><br>
         <input type="submit" id="log" value="Set Speed">
         <br>
+    </form>
     </div>     
     </div>    
 </body>    
@@ -387,6 +416,11 @@ label{
     <h2>Ambassador</h2><br>    
     <div class="login">    
     <div id="login" >      
+    <form action="/logout">
+    <input type="submit" id="log" value="Logout"><br>
+    </form>
+    <label><b>Power Production</b></label>
+        <h1 id="rev">%POWERPROD%</h1><br>
     <label><b>Temperature</b></label>
     <h1 id="rev">%TEMPERATURE%</h1><br>
     <label><b>Humidity</b></label>

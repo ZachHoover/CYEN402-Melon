@@ -5,6 +5,42 @@ short resistor[5];
 byte credIndex = -1;
 #define RESTOL 5
 
+IPAddress loggedin[5];
+
+bool assign_login(IPAddress adr)
+{
+  if (credIndex < 0)
+  {
+    return false;
+  }
+  if ((loggedin[credIndex] == IPAddress()) or (loggedin[credIndex] == adr))
+  {
+    loggedin[credIndex] = adr;
+    return true;
+  }
+  return false;
+}
+
+byte check_login(IPAddress adr)
+{
+  for (byte i=0; i<5; i++)
+  {
+    if (loggedin[i] == adr)
+    {
+      return i;
+    }
+  }
+  return -1;
+}
+
+void remove_login(int acc)
+{
+  if ((acc >= 0) and (acc < 5))
+  {
+    loggedin[acc] = IPAddress();
+  }
+}
+
 //Password Check
 bool passwords_check(String user, String pass)
 {
