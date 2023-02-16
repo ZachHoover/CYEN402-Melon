@@ -2,13 +2,14 @@
 
 void send_log(String str)
 {
-  Serial.println(str);
-  client.print(str);
+  //Serial.println(str);
+  //client.print(str);
 }
 
 //Setup
 void logs_setup()
 {
+  /*
   Serial.println("Connecting to Logger");
   while (client.connect("96.33.128.163", 7779) == false)
   {
@@ -17,8 +18,9 @@ void logs_setup()
   }
   client.print("Melon");
   send_log("ESP Connected. Webpage located at:  http://"+WiFi.localIP().toString());
-  Serial.println("Connected.");
   
+  Serial.println("Connected.");
+  */
 }
 
 //Loop

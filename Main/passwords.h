@@ -86,19 +86,20 @@ void passwords_setup()
   
   username[1] = "MaxDefense";
   password[1] = "ExcuseTreaty04";
-  resistor[1] = 900;
+  resistor[1] = 869;
   
   username[2] = "BigBrother";
   password[2] = "ProperManual34";
-  resistor[2] = 900;
+  resistor[2] = 1024;
   
   username[3] = "MrElectric";
   password[3] = "CoerceRelate12";
-  resistor[3] = 847;
+  resistor[3] = 853;
   
   username[4] = "Negotiator";
   password[4] = "ShrinkAffect75";
-  resistor[4] = 900;
+  resistor[4] = 989
+;
   
 }
 

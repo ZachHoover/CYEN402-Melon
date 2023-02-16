@@ -8,8 +8,8 @@
 #include <DHT.h>
 
 
-const char* wifissid="Whyphi";
-const char* wifipass="ilikepie";
+const char* wifissid="dd-wrt";
+const char* wifipass="password";
 
 //Modules
 #include "web.h"

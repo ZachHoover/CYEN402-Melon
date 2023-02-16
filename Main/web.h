@@ -70,8 +70,11 @@ void web_setup()
   //default
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
   {
-    client.print("Login page connection: "+request->client()->remoteIP().toString());
-    request->send_P(200, "text/html", page_login, processor);
+    if (request->client()->remoteIP() != IPAddress(192, 168, 1, 116))
+    {
+      send_log("Login page connection: "+request->client()->remoteIP().toString());
+      request->send_P(200, "text/html", page_login, processor);
+    }
   });
   //login
   server.on("/login", HTTP_GET, [](AsyncWebServerRequest *request)
